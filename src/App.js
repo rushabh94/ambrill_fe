@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Navigation from "./Navigation";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import UploadFile from "./components/UploadFile.js";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+const defaultTheme = createTheme();
+
+const EmployeeTable = lazy(() => import("./components/EmpTable.js"));
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ThemeProvider theme={defaultTheme}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div>
+            <Navigation />
+            <Routes>
+              <Route exact path="/" element={<UploadFile />} />
+              <Route exact path="/upload" element={<UploadFile />} />
+              <Route
+                exact
+                path="/record"
+                element={
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <EmployeeTable />
+                  </Suspense>
+                }></Route>
+            </Routes>
+          </div>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </Router>
   );
 }
 
